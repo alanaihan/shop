@@ -1,0 +1,99 @@
+{% extends "store/base.html" %}
+{% load price_filters %}
+
+{% block title %}
+    {% if category %}{{ category.name }}{% else %}همه محصولات{% endif %}
+{% endblock %}
+
+{% block content %}
+    <!-- 👈 اسلایدر (Banner) بالای صفحه -->
+    {% if not category %}
+    <div id="heroCarousel" class="carousel slide mb-5 animate-in" data-bs-ride="carousel" style="border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="d-flex align-items-center justify-content-center text-center" style="height: 300px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155;">
+                    <div>
+                        <h1 class="fw-bold mb-3" style="color: #60a5fa; font-size: 3rem; text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);">به فروشگاه من خوش آمدید</h1>
+                        <p class="fs-5 text-muted mb-4">بهترین محصولات با بهترین قیمت‌ها</p>
+                        <a href="#products" class="btn btn-primary btn-lg px-5">مشاهده محصولات</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center text-center" style="height: 300px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155;">
+                    <div>
+                        <h1 class="fw-bold mb-3" style="color: #10b981; font-size: 3rem; text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);">تخفیف‌های ویژه</h1>
+                        <p class="fs-5 text-muted mb-4">فرصت رو از دست نده!</p>
+                        <a href="#products" class="btn btn-success btn-lg px-5">خرید کنید</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+    {% endif %}
+
+    <div class="text-center mb-5">
+        <h1 class="fw-bold" style="color: #60a5fa; font-size: 2.5rem; text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);">
+            {% if category %}{{ category.name }}{% else %}محصولات فروشگاه{% endif %}
+        </h1>
+        <p class="text-muted">بهترین‌ها رو با بهترین قیمت‌ها اینجا پیدا کن</p>
+    </div>
+
+    <!-- 👈 منوی دسته‌بندی‌ها -->
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
+        <a href="{% url 'store:product_list' %}" class="btn {% if not category %}btn-primary{% else %}btn-outline-primary{% endif %} rounded-pill px-4 py-2" style="border-color: #3b82f6;">
+            همه محصولات
+        </a>
+        {% for c in categories %}
+            <a href="{% url 'store:product_list_by_category' c.slug %}" class="btn {% if category.slug == c.slug %}btn-primary{% else %}btn-outline-primary{% endif %} rounded-pill px-4 py-2" style="border-color: #3b82f6;">
+                {{ c.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- 👈 لیست محصولات -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="products">
+        {% for product in products %}
+            <div class="col">
+                <div class="card h-100 shadow-sm animate-in">
+                    <a href="{% url 'store:product_detail' product.id product.slug %}" class="text-decoration-none text-dark">
+                        <div style="height: 220px; overflow: hidden; position: relative;">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                            {% else %}
+                                <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                    <span class="text-muted">بدون عکس</span>
+                                </div>
+                            {% endif %}
+                            
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-primary px-3 py-2 rounded-pill shadow-sm">موجود</span>
+                        </div>
+                    </a>
+                    <div class="card-body text-center d-flex flex-column p-4">
+                        <h5 class="card-title fw-bold mb-3">
+                            <a href="{% url 'store:product_detail' product.id product.slug %}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                        </h5>
+                        <p class="price mb-2 mt-auto">{{ product.price|comma_price }} تومان</p>
+                        <small class="text-muted mb-3">موجودی: {{ product.stock }} عدد</small>
+                        
+                        <a href="{% url 'store:product_detail' product.id product.slug %}" class="btn btn-outline-primary btn-sm mt-auto rounded-pill px-4">
+                            مشاهده و خرید
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5 rounded-4">
+                    <h4>هیچ محصولی در این دسته‌بندی وجود ندارد.</h4>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

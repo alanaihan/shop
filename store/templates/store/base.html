@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}فروشگاه من{% endblock %}</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        /* 👈 تنظیمات کلی صفحه با پس‌زمینه تیره و درخشش نرم (مش گرادیانت) */
+        body { 
+            background-color: #080b14;
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+            font-family: 'Vazirmatn', Tahoma, sans-serif; 
+            color: #e2e8f0;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            background-attachment: fixed;
+        }
+
+        /* 👈 اسکرول‌بار سفارشی */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #60a5fa; }
+
+        /* 👈 هدر شیشه‌ای و مدرن با درخشش لیزری */
+        .navbar-custom { 
+            background: rgba(15, 23, 42, 0.6) !important;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 0 0 30px 30px;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* خط لیزری متحرک زیر هدر */
+        .navbar-custom::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #60a5fa, #3b82f6, #8b5cf6, transparent);
+            animation: scanLine 3s linear infinite;
+        }
+
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .navbar-custom .navbar-brand { 
+            color: #60a5fa !important; 
+            font-weight: 900;
+            font-size: 1.8rem;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.8), 0 0 40px rgba(96, 165, 250, 0.4);
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+        }
+
+        .navbar-custom .navbar-brand:hover {
+            text-shadow: 0 0 30px rgba(96, 165, 250, 1), 0 0 60px rgba(96, 165, 250, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* 👈 کارت‌های محصول (شیشه‌ای لوکس با انعکاس نور) */
+        .card { 
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.5));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #e2e8f0;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        /* انعکاس نور روی کارت */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 100%);
+            transform: rotate(30deg);
+            transition: all 0.5s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+            transform: rotate(30deg) translate(20%, 20%);
+        }
+        
+        .card:hover { 
+            transform: translateY(-15px) scale(1.03); 
+            box-shadow: 0 30px 60px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(96, 165, 250, 0.7);
+        }
+
+        .card img { transition: transform 0.8s ease; }
+        .card:hover img { transform: scale(1.1); }
+        
+        /* 👈 قیمت با درخشش نئونی */
+        .price { 
+            color: #38bdf8; 
+            font-weight: 900; 
+            font-size: 1.4rem;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.8), 0 0 30px rgba(56, 189, 248, 0.4);
+            letter-spacing: 0.5px;
+        }
+        
+        /* 👈 دکمه‌ها (سه‌بعدی و درخشان با موج نور) */
+        .btn { 
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            border-radius: 15px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: none;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover { transform: translateY(-4px) scale(1.05); }
+        .btn:active { transform: translateY(1px) scale(0.95); }
+
+        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
+        .btn-success:hover { box-shadow: 0 12px 30px rgba(16, 185, 129, 0.8); }
+        .btn-primary { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
+        .btn-primary:hover { box-shadow: 0 12px 30px rgba(59, 130, 246, 0.8); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5); }
+        .btn-info { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5); }
+        .btn-secondary { background: linear-gradient(135deg, #64748b 0%, #475569 100%); box-shadow: 0 6px 20px rgba(100, 116, 139, 0.5); }
+
+        /* 👈 انیمیشن ورود */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { 
+            animation: fadeInUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+            opacity: 0; 
+        }
+
+        /* 👈 رنگ‌های متن */
+        .text-dark { color: #e2e8f0 !important; }
+        .text-muted { color: #94a3b8 !important; }
+        .bg-light { background-color: #0f172a !important; }
+        
+        /* 👈 جدول‌ها */
+        .table { color: #e2e8f0; }
+        .table-light { background-color: #1e293b !important; color: #e2e8f0; }
+        
+        /* 👈 فرم‌ها */
+        .form-control, .form-select {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+
+        /* 👈 استایل چت آنلاین */
+        .chat-widget { position: fixed; bottom: 30px; left: 30px; z-index: 9999; }
+        .chat-btn { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); cursor: pointer; transition: all 0.3s ease; animation: pulse 2s infinite; }
+        .chat-btn:hover { transform: scale(1.1); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.8); }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+        .chat-window { display: none; position: absolute; bottom: 80px; left: 0; width: 350px; background: #1e293b; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #334155; overflow: hidden; animation: fadeInUp 0.3s ease-out; }
+        .chat-window.active { display: flex; flex-direction: column; }
+        .chat-header { background: #0f172a; color: #60a5fa; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #334155; }
+        .chat-body { padding: 15px; height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-message { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 14px; }
+        .chat-message.bot { background: #0f172a; color: #e2e8f0; align-self: flex-start; border-bottom-right-radius: 2px; }
+        .chat-message.user { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; align-self: flex-end; border-bottom-left-radius: 2px; }
+        .chat-footer { display: flex; padding: 10px; background: #0f172a; border-top: 1px solid #334155; }
+        .chat-footer input { flex: 1; background: #1e293b; border: 1px solid #334155; color: white; border-radius: 20px; padding: 8px 15px; outline: none; }
+        .chat-footer button { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 8px 15px; margin-right: 10px; cursor: pointer; transition: 0.2s; }
+        .chat-footer button:hover { background: #2563eb; }
+
+        /* 👈 استایل برای اسلایدر بالای صفحه */
+        .carousel-item {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 👈 پس‌زمینه متحرک ذرات -->
+    <canvas id="particleCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.4;"></canvas>
+
+    <nav class="navbar navbar-expand-lg navbar-custom mb-5">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'store:product_list' %}">🛒 فروشگاه من</a>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <a href="{% url 'store:cart_detail' %}" class="btn btn-success btn-sm px-3 py-2">🛍️ سبد خرید</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'store:my_orders' %}" class="btn btn-info btn-sm px-3 py-2">📦 سفارش‌های من</a>
+                    <a href="{% url 'store:my_chats' %}" class="btn btn-secondary btn-sm px-3 py-2">💬 چت‌های من</a>
+                    <span class="text-light mx-2 fw-bold">سلام، {{ user.username }} 👋</span>
+                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm px-3 py-2">خروج</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-3 py-2">🔐 ورود</a>
+                    <a href="{% url 'signup' %}" class="btn btn-warning btn-sm px-3 py-2">📝 ثبت‌نام</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <div class="chat-widget">
+        <button class="chat-btn" onclick="toggleChat()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
+                <path d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+            </svg>
+        </button>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span>💬 پشتیبانی آنلاین</span>
+                <button class="btn-close btn-close-white" onclick="toggleChat()"></button>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="chat-message bot">
+                    سلام! 👋 چطور می‌تونم کمکتون کنم؟
+                </div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatInput" placeholder="پیام خود را بنویسید..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()">ارسال</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 👈 کد حرکت ذرات
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 1.5 + 0.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#60a5fa';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 👈 کد چت
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('active');
+            
+            if (chatWindow.classList.contains('active')) {
+                loadChatHistory();
+            }
+        }
+
+        function loadChatHistory() {
+            const body = document.getElementById('chatBody');
+            body.innerHTML = ''; 
+
+            fetch('/chat/history/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' && data.chats.length > 0) {
+                    data.chats.forEach(chat => {
+                        const userMsg = document.createElement('div');
+                        userMsg.className = 'chat-message user';
+                        userMsg.textContent = chat.message;
+                        body.appendChild(userMsg);
+
+                        if (chat.reply) {
+                            const botMsg = document.createElement('div');
+                            botMsg.className = 'chat-message bot';
+                            botMsg.innerHTML = `<strong>پشتیبانی:</strong><br>${chat.reply}`;
+                            body.appendChild(botMsg);
+                        }
+                    });
+                } else {
+                    const welcomeMsg = document.createElement('div');
+                    welcomeMsg.className = 'chat-message bot';
+                    welcomeMsg.textContent = 'سلام! 👋 چطور می‌تونم کمکتون کنم؟';
+                    body.appendChild(welcomeMsg);
+                }
+                body.scrollTop = body.scrollHeight;
+            })
+            .catch(error => console.error('Error loading history:', error));
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const body = document.getElementById('chatBody');
+            const message = input.value.trim();
+
+            if (message === '') return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.textContent = message;
+            body.appendChild(userMsg);
+
+            input.value = '';
+            body.scrollTop = body.scrollHeight;
+
+            fetch('/chat/send/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ 'message': message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    setTimeout(() => {
+                        const botMsg = document.createElement('div');
+                        botMsg.className = 'chat-message bot';
+                        botMsg.textContent = 'پیام شما با موفقیت دریافت شد. به زودی پاسخ می‌دهیم. 🙏';
+                        body.appendChild(botMsg);
+                        body.scrollTop = body.scrollHeight;
+                    }, 1000);
+                }
+            });
+        }
+
+        // 👈 انیمیشن آبشاری برای کارت‌ها
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card.animate-in');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{% extends "store/base.html" %}
+{% load price_filters %}
+
+{% block title %}سبد خرید{% endblock %}
+
+{% block content %}
+    <h2 class="fw-bold mb-4" style="color: #60a5fa;">🛒 سبد خرید شما</h2>
+
+    {% if cart %}
+        <div class="shadow-sm mb-4" style="background: #1e293b; border: 1px solid #334155; border-radius: 15px; overflow: hidden;">
+            <div class="p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 text-center align-middle" style="background-color: transparent;">
+                        <thead style="border-bottom: 2px solid #334155; background-color: #0f172a;">
+                            <tr>
+                                <th class="py-3 text-light">محصول</th>
+                                <th class="py-3 text-light">تعداد</th>
+                                <th class="py-3 text-light">قیمت واحد</th>
+                                <th class="py-3 text-light">جمع</th>
+                                <th class="py-3 text-light">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart %}
+                                <tr>
+                                    <td class="py-3 fw-bold text-light">{{ item.product.name }}</td>
+                                    <td class="py-3">
+                                        <form action="{% url 'store:cart_update' item.id %}" method="post" class="d-flex justify-content-center gap-2">
+                                            {% csrf_token %}
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="0" class="form-control text-center bg-dark text-light border-secondary" style="width: 70px;">
+                                            <button type="submit" class="btn btn-sm btn-primary">به‌روزرسانی</button>
+                                        </form>
+                                    </td>
+                                    <td class="py-3 text-light">{{ item.price|comma_price }} تومان</td>
+                                    <td class="py-3 fw-bold" style="color: #60a5fa;">{{ item.total_price|comma_price }} تومان</td>
+                                    <td class="py-3">
+                                        <form action="{% url 'store:cart_remove' item.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-danger">❌ حذف</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="p-4 d-flex justify-content-between align-items-center" style="background: #0f172a; border-top: 1px solid #334155;">
+                <h4 class="mb-0 fw-bold" style="color: #60a5fa;">مجموع کل: {{ cart.get_total_price|comma_price }} تومان</h4>
+                
+                <!-- 👈 دکمه ثبت سفارش با محدودیت لاگین -->
+                {% if user.is_authenticated %}
+                    <a href="{% url 'store:order_create' %}" class="btn btn-success btn-lg px-4">
+                        🛍️ ادامه و ثبت سفارش
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'store:order_create' %}" class="btn btn-primary btn-lg px-4">
+                        🔐 برای ثبت سفارش وارد شوید
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="alert text-center py-5 rounded-4" style="background: #1e293b; border: 1px solid #334155; color: #e2e8f0;">
+            <h4>سبد خرید شما خالی است.</h4>
+            <a href="{% url 'store:product_list' %}" class="btn btn-primary mt-3 px-4">برو به فروشگاه</a>
+        </div>
+    {% endif %}
+{% endblock %}

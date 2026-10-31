@@ -1,0 +1,34 @@
+{% extends "store/base.html" %}
+
+{% block title %}سفارش ثبت شد{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8 text-center">
+            <div class="card shadow-sm border-0 py-5">
+                <div class="card-body">
+                    <h1 class="text-success" style="font-size: 60px;">✅</h1>
+                    <h2 class="fw-bold mb-3">سفارش شما با موفقیت ثبت شد!</h2>
+                    <p class="fs-5 text-muted mb-4">
+                        شماره پیگیری سفارش شما: <strong class="text-dark">{{ order.id }}</strong>
+                    </p>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <!-- 👈 دکمه پرداخت آنلاین (اصلاح شد) -->
+                        <a href="{% url 'store:payment_start' order.id %}" class="btn btn-success btn-lg px-5">
+                            💳 پرداخت آنلاین
+                        </a>
+                        
+                        <a href="{% url 'store:product_list' %}" class="btn btn-outline-secondary btn-lg px-5">
+                            بازگشت به فروشگاه
+                        </a>
+                    </div>
+                    
+                    <p class="text-muted mt-4 small">
+                        در صورت عدم پرداخت، سفارش شما در وضعیت «در انتظار پرداخت» باقی می‌ماند.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

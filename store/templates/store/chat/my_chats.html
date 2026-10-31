@@ -1,0 +1,36 @@
+{% extends "store/base.html" %}
+
+{% block title %}چت‌های من{% endblock %}
+
+{% block content %}
+    <h2 class="fw-bold mb-4" style="color: #60a5fa;">💬 چت‌های من</h2>
+
+    {% if chats %}
+        <div class="row">
+            {% for chat in chats %}
+                <div class="col-md-8 mb-4">
+                    <div class="card shadow-sm" style="background: #1e293b; border: 1px solid #334155; border-radius: 15px;">
+                        <div class="card-body">
+                            <p class="text-muted mb-1"><small>{{ chat.created_at|date:"Y/m/d H:i" }}</small></p>
+                            <div class="chat-message user mb-3" style="background: rgba(59, 130, 246, 0.2); padding: 10px; border-radius: 10px; color: #e2e8f0;">
+                                <strong>شما:</strong> {{ chat.message }}
+                            </div>
+                            {% if chat.reply %}
+                                <div class="chat-message bot" style="background: rgba(16, 185, 129, 0.2); padding: 10px; border-radius: 10px; color: #e2e8f0;">
+                                    <strong>پشتیبانی:</strong> {{ chat.reply }}
+                                </div>
+                            {% else %}
+                                <p class="text-muted"><em>در انتظار پاسخ...</em></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert text-center py-5 rounded-4" style="background: #1e293b; border: 1px solid #334155; color: #e2e8f0;">
+            <h4>شما هیچ چتی ندارید.</h4>
+            <a href="{% url 'store:product_list' %}" class="btn btn-primary mt-3 px-4">برو به فروشگاه</a>
+        </div>
+    {% endif %}
+{% endblock %}

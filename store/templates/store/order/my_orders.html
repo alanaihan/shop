@@ -1,0 +1,76 @@
+{% extends "store/base.html" %}
+{% load price_filters %}
+
+{% block title %}سفارش‌های من{% endblock %}
+
+{% block content %}
+    <h2 class="fw-bold mb-4" style="color: #60a5fa;">📦 سفارش‌های من</h2>
+
+    {% if orders %}
+        <div class="row g-4">
+            {% for order in orders %}
+                <div class="col-md-6">
+                    <!-- 👈 کارت اصلی سفارش با تم تاریک -->
+                    <div class="shadow-sm h-100 animate-in" style="background: #1e293b; border: 1px solid #334155; border-radius: 15px; overflow: hidden;">
+                        
+                        <div class="p-3 d-flex justify-content-between align-items-center" style="background: #0f172a; border-bottom: 1px solid #334155; color: #e2e8f0;">
+                            <span class="fw-bold">سفارش #{{ order.id }}</span>
+                            <small style="color: #94a3b8;">{{ order.created|date:"Y/m/d H:i" }}</small>
+                        </div>
+                        
+                        <div class="p-4 text-light">
+                            <p class="mb-2"><strong>نام:</strong> {{ order.first_name }} {{ order.last_name }}</p>
+                            <p class="mb-2"><strong>تلفن:</strong> {{ order.phone }}</p>
+                            <p class="mb-2"><strong>آدرس:</strong> {{ order.address }}</p>
+                            
+                            <hr style="border-color: #334155;">
+                            
+                            <h5 class="mb-3" style="color: #94a3b8;">محصولات:</h5>
+                            <ul class="list-group list-group-flush mb-3" style="background: transparent;">
+                                {% for item in order.items.all %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0" style="background: transparent; border-color: #334155; color: #e2e8f0;">
+                                        <span>{{ item.product.name }} <span class="badge bg-primary mx-1">× {{ item.quantity }}</span></span>
+                                        <span class="fw-bold">{{ item.get_cost|comma_price }} تومان</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <!-- 👈 فوتر کارت (این بخشی بود که سفید بود) -->
+                        <div class="p-3 d-flex justify-content-between align-items-center" style="background: #0f172a; border-top: 1px solid #334155;">
+                            <div>
+                                <span class="fw-bold" style="color: #60a5fa;">مجموع: {{ order.get_total_cost|comma_price }} تومان</span>
+                                {% if order.paid %}
+                                    <span class="badge bg-success ms-2">پرداخت شده</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark ms-2">در انتظار پرداخت</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                {% if not order.paid %}
+                                    <a href="{% url 'store:payment_start' order.id %}" class="btn btn-success btn-sm">
+                                        💳 پرداخت
+                                    </a>
+                                {% endif %}
+                                
+                                <form action="{% url 'store:order_delete' order.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('آیا از حذف این سفارش مطمئن هستید؟')">
+                                        🗑️ حذف
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert text-center py-5 rounded-4" style="background: #1e293b; border: 1px solid #334155; color: #e2e8f0;">
+            <h4>شما هنوز هیچ سفارشی ثبت نکرده‌اید.</h4>
+            <a href="{% url 'store:product_list' %}" class="btn btn-primary mt-3 px-4">برو به فروشگاه</a>
+        </div>
+    {% endif %}
+{% endblock %}

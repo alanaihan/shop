@@ -1,0 +1,45 @@
+{% extends "store/base.html" %}
+
+{% block title %}ورود به حساب کاربری{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="shadow-sm animate-in" style="background: #1e293b; border: 1px solid #334155; border-radius: 15px;">
+                <div class="p-5">
+                    <h2 class="text-center fw-bold mb-4" style="color: #60a5fa;">🔐 ورود به حساب</h2>
+                    
+                    {% if form.errors %}
+                        <div class="alert text-center mb-4" style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5;">
+                            نام کاربری یا رمز عبور اشتباه است.
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-light">نام کاربری:</label>
+                            <input type="text" name="username" class="form-control bg-dark text-light border-secondary" style="padding: 10px;" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-light">رمز عبور:</label>
+                            <input type="password" name="password" class="form-control bg-dark text-light border-secondary" style="padding: 10px;" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-3 mb-3">
+                            ورود
+                        </button>
+                        
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </form>
+                    
+                    <p class="text-center mt-3" style="color: #e2e8f0;">
+                        حساب ندارید؟ <a href="{% url 'signup' %}" style="color: #60a5fa; text-decoration: none; font-weight: bold;">ثبت‌نام کنید</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "store/base.html" %}
+{% load price_filters %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow-sm border-0" style="background: #1e293b; border-radius: 15px; overflow: hidden;">
+                <div class="row g-0 align-items-center">
+                    <!-- 👈 ستون عکس -->
+                    <div class="col-md-5 text-center bg-dark" style="min-height: 400px; display: flex; align-items: center; justify-content: center; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-left: 1px solid #334155;">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}" style="max-height: 400px; width: 100%; object-fit: contain; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        {% else %}
+                            <span class="text-muted">بدون عکس</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 👈 ستون اطلاعات -->
+                    <div class="col-md-7">
+                        <div class="card-body p-4 p-md-5">
+                            <h2 class="card-title fw-bold mb-3" style="color: #60a5fa; text-shadow: 0 0 15px rgba(96, 165, 250, 0.3);">{{ product.name }}</h2>
+                            <p class="text-muted mb-3">
+                                دسته‌بندی: 
+                                <a href="{% url 'store:product_list_by_category' product.category.slug %}" style="color: #3b82f6; text-decoration: none; font-weight: bold;">
+                                    {{ product.category.name }}
+                                </a>
+                            </p>
+                            <h3 class="price mb-4">{{ product.price|comma_price }} تومان</h3>
+                            <p class="mb-4 text-light">موجودی: <strong style="color: #10b981;">{{ product.stock }}</strong> عدد</p>
+                            
+                            <hr style="border-color: #334155;">
+                            <p class="text-secondary mb-4" style="line-height: 1.8;">{{ product.description|default:"بدون توضیحات" }}</p>
+                            <hr style="border-color: #334155;">
+
+                            <!-- 👈 دکمه افزودن به سبد خرید با محدودیت لاگین -->
+                            {% if user.is_authenticated %}
+                                <form action="{% url 'store:cart_add' product.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-lg w-100 mb-4 py-3" style="font-size: 1.2rem;">
+                                        🛒 افزودن به سبد خرید
+                                    </button>
+                                </form>
+                            {% else %}
+                                <div class="alert text-center mb-3" style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; color: #93c5fd; border-radius: 10px;">
+                                    برای خرید باید ابتدا وارد حساب کاربری خود شوید.
+                                </div>
+                                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100 mb-4 py-3" style="font-size: 1.2rem;">
+                                    🔐 ورود به حساب
+                                </a>
+                            {% endif %}
+                            
+                            <div class="text-center">
+                                <a href="{% url 'store:product_list' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#94a3b8'">
+                                    ← بازگشت به فروشگاه
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
