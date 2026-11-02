@@ -18,6 +18,10 @@ class Product(models.Model):
     slug = models.SlugField(max_length=200, db_index=True)
     image = models.ImageField(upload_to='products/%Y/%m/%d', blank=True)
     description = models.TextField(blank=True)
+    
+    # 👈 این فیلد رو اینجا داری: برچسب اطلاعات (مثلاً آیدی بازی)
+    extra_info_label = models.CharField(max_length=100, blank=True, null=True, verbose_name='برچسب اطلاعات اضافی')
+    
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     available = models.BooleanField(default=True)
@@ -37,11 +41,15 @@ class Order(models.Model):
     last_name = models.CharField(max_length=50, verbose_name='نام خانوادگی')
     phone = models.CharField(max_length=15, verbose_name='شماره تماس')
     address = models.TextField(verbose_name='آدرس')
+    
+    # 👈 این فیلد رو اینجا داری: جواب کاربر به سوال
+    extra_info = models.CharField(max_length=255, blank=True, null=True, verbose_name='اطلاعات اضافی سفارش')
+    
     created = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False, verbose_name='پرداخت شده')
     authority = models.CharField(max_length=255, blank=True, null=True, verbose_name='شناسه پرداخت')
-    amount_sent = models.DecimalField(max_digits=12, decimal_places=0, blank=True, null=True, verbose_name='مبلغ ارسالی')
+    amount_sent = models.DecimalField(max_digits=12, decimal_places=0, blank=True, null=True, verbose_name='مبلغ ارسالی (ریال)')
     class Meta:
         ordering = ('-created',)
         verbose_name = 'سفارش'
@@ -74,4 +82,4 @@ class ChatMessage(models.Model):
         ordering = ('-created_at',)
         verbose_name = 'پیام پشتیبانی'
         verbose_name_plural = 'پیام‌های پشتیبانی'
-    def __str__(self): return f'پیام از {self.name or self.user} - {self.created_at.strftime("%Y/%m/%d %H:%M")}'
+    def __str__(self): return f'پیام از {self.name or self.user}'

@@ -40,9 +40,15 @@ def cart_add(request, product_id):
     return redirect('store:cart_detail')
 
 
+# 👈 این تابع تغییر کرده تا برچسب اطلاعات اضافی رو پیدا کنه
 def cart_detail(request):
     cart = Cart(request)
-    return render(request, 'store/cart/detail.html', {'cart': cart})
+    extra_label = None
+    for item in cart:
+        if item['product'].extra_info_label:
+            extra_label = item['product'].extra_info_label
+            break
+    return render(request, 'store/cart/detail.html', {'cart': cart, 'extra_label': extra_label})
 
 
 @require_POST
@@ -74,6 +80,8 @@ def order_create(request):
             order = form.save(commit=False)
             if request.user.is_authenticated:
                 order.user = request.user
+            # 👈 ذخیره اطلاعات اضافی که کاربر وارد کرده
+            order.extra_info = request.POST.get('extra_info', '')
             order.save()
             for item in cart:
                 OrderItem.objects.create(
@@ -191,15 +199,11 @@ def my_chats(request):
     return render(request, 'store/chat/my_chats.html', {'chats': chats})
 
 
-# 👈 ویو جدید برای گرفتن تاریخچه چت
 def get_chat_history(request):
     if request.user.is_authenticated:
         chats = ChatMessage.objects.filter(user=request.user).order_by('created_at')
         data = []
         for chat in chats:
-            data.append({
-                'message': chat.message,
-                'reply': chat.reply,
-            })
+            data.append({'message': chat.message, 'reply': chat.reply})
         return JsonResponse({'status': 'success', 'chats': data})
     return JsonResponse({'status': 'error'}, status=400)

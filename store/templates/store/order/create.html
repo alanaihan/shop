@@ -13,15 +13,31 @@
                 <div class="card-body p-4">
                     <form action="." method="post">
                         {% csrf_token %}
+                        
+                        <!-- فیلدهای ثابت -->
                         {% for field in form %}
-                            <div class="mb-3">
-                                <label class="form-label fw-bold text-light">{{ field.label }}:</label>
-                                {{ field }}
-                                {% if field.errors %}
-                                    <div class="text-danger small mt-1">{{ field.errors }}</div>
-                                {% endif %}
-                            </div>
+                            {% if field.name != 'extra_info' %}
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-light">{{ field.label }}:</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="text-danger small mt-1">{{ field.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                         {% endfor %}
+
+                        <!-- 👈 فیلد اطلاعات اضافی (اگر محصول برچسب داشت نشون داده میشه) -->
+                        {% if form.extra_info.field.widget.attrs.placeholder != 'اطلاعات اضافی' or cart.get_total_price %}
+                            <div class="mb-3 p-3" style="background: rgba(59, 130, 246, 0.1); border: 1px dashed #3b82f6; border-radius: 10px;">
+                                <label class="form-label fw-bold" style="color: #60a5fa;">
+                                    {{ form.extra_info.label }}
+                                </label>
+                                {{ form.extra_info }}
+                                <small class="text-muted d-block mt-1">لطفاً اطلاعات دقیق را وارد کنید.</small>
+                            </div>
+                        {% endif %}
+
                         <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
                             ✅ ثبت نهایی سفارش
                         </button>
